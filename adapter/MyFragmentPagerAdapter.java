@@ -33,7 +33,9 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
                 fa.setPs(ps);
                 return fa;
             case 1:
-                return new FragmentB();
+                FragmentB fb = new FragmentB();
+                fb.setPs(ps);
+                return fb;
             default:
                 return null;
         }

@@ -22,7 +22,7 @@ public class FragmentA extends Fragment {
     private TextView txtCidade1;
     private TextView txtBairro1;
     private TextView txtEndereco1;
-    private TextView txtTelefone1;
+
 
     private PrestadorServico ps;
 
@@ -43,17 +43,12 @@ public class FragmentA extends Fragment {
         txtCidade1 = (TextView) view.findViewById(R.id.txtCidade1);
         txtBairro1 = (TextView) view.findViewById(R.id.txtBairro1);
         txtEndereco1 = (TextView) view.findViewById(R.id.txtEndereco1);
-        txtTelefone1 = (TextView) view.findViewById(R.id.txtTelefone1);
 
         txtNome1.setText(getPs().getNome());
         txtProfissao1.setText(getPs().getProfissao());
         txtCidade1.setText(getPs().getCidade());
-        txtBairro1.setText("bairro test");
+        txtBairro1.setText(getPs().getBairro());
         txtEndereco1.setText(getPs().getEndereco());
-        txtTelefone1.setText("telefone test");
-
-
-        //tv.setText("Fragment 2");
 
         return view;
     }

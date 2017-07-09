@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.lucas.senac.topicosavancados.adapter.MyFragmentPagerAdapter;
 import com.lucas.senac.topicosavancados.bean.PrestadorServico;
 
+import java.util.ArrayList;
+
 public class MenuInformativo extends AppCompatActivity implements TarefaInterface {
 
     private TabLayout mTabLayout;
@@ -19,6 +21,7 @@ public class MenuInformativo extends AppCompatActivity implements TarefaInterfac
     private ImageView img;
     private String json = "";
     private Boolean aux = true;
+    private ActPrincipal ac = new ActPrincipal();
 
     public String getJson() {
         return json;
@@ -36,8 +39,8 @@ public class MenuInformativo extends AppCompatActivity implements TarefaInterfac
         long idSelected = getIntent().getLongExtra("ID", 0);
         int positionSelected = getIntent().getIntExtra("POSITION", 0);
 
-        Log.e("test", idSelected+"");
-        Log.e("test", positionSelected+"");
+        Log.e("test", idSelected + "");
+        Log.e("test", positionSelected + "");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -47,21 +50,20 @@ public class MenuInformativo extends AppCompatActivity implements TarefaInterfac
         img = (ImageView) findViewById(R.id.imagem);
 
         HttpConnection tarefa = new HttpConnection(this, this);
-        tarefa.execute("https://prestadorservico.herokuapp.com", "teste");
+        tarefa.execute();
         while (aux) ;
-        ActPrincipal ac = new ActPrincipal();
-        ac.setPesquisa(ac.degenerateJSON(getJson()));
+        ac.setPesquisa(ac.adicionarPrestadorServico());
+
         PrestadorServico ps = ac.getPesquisa().get(positionSelected);
         img.setImageResource(ps.getImagem());
 
-        mViewPager.setAdapter(new MyFragmentPagerAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.titler_tab),ps));
+        mViewPager.setAdapter(new MyFragmentPagerAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.titler_tab), ps));
 
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
     @Override
     public void depoisDownload(String retorno) {
-
         setJson(retorno);
         this.aux = false;
     }

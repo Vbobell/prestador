@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.lucas.senac.topicosavancados.adapter.PrestadorServicoAdapter;
 import com.lucas.senac.topicosavancados.bean.PrestadorServico;
@@ -50,6 +51,10 @@ public class ActPrincipal extends AppCompatActivity
     private ArrayAdapter adapter;
     private Boolean aux = true;
 
+    public void setAux(Boolean aux) {
+        this.aux = aux;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,18 +73,17 @@ public class ActPrincipal extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         getJson();
-        while (aux) ;
+
         lView = (ListView) findViewById(R.id.lView);
         eText = (EditText) findViewById(R.id.eText);
         adapter = new PrestadorServicoAdapter(this, pesquisa);
         lView.setAdapter(adapter);
 
-        //sendJson(pesquisa);
-        //getJson();
 
         eText.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.e("test", pesquisa.toString());
                 adapter = new PrestadorServicoAdapter(ActPrincipal.this, filtrar(s));
                 lView.setAdapter(adapter);
             }
@@ -120,11 +124,18 @@ public class ActPrincipal extends AppCompatActivity
         try {
             for (int i = 0, tam = pesquisa.size(); i < tam; i++) {
                 JSONObject aux = new JSONObject();
+                aux.put("imagem", pesquisa.get(i).getImagem());
                 aux.put("nome", pesquisa.get(i).getNome());
                 aux.put("profissao", pesquisa.get(i).getProfissao());
                 aux.put("cidade", pesquisa.get(i).getCidade());
+                aux.put("bairro", pesquisa.get(i).getBairro());
                 aux.put("endereco", pesquisa.get(i).getEndereco());
-                aux.put("imagem", pesquisa.get(i).getImagem());
+                aux.put("dddT", pesquisa.get(i).getDddT());
+                aux.put("telefone", pesquisa.get(i).getTelefone());
+                aux.put("dddW", pesquisa.get(i).getDddW());
+                aux.put("whats", pesquisa.get(i).getWhats());
+                aux.put("email", pesquisa.get(i).getEmail());
+
                 ja.put(aux);
             }
             jo.put("prestadorSevico", ja);
@@ -139,49 +150,63 @@ public class ActPrincipal extends AppCompatActivity
         try {
             JSONObject jo = new JSONObject(data);
             JSONArray ja;
-            ja = jo.getJSONArray("prestadorSevico");
+            ja = jo.getJSONArray("prestadorServico");
             for (int i = 0; i < ja.length(); i++) {
                 PrestadorServico prestadorServico = new PrestadorServico();
+                prestadorServico.setImagem(Integer.parseInt(ja.getJSONObject(i).getString("imagem")));
                 prestadorServico.setNome(ja.getJSONObject(i).getString("nome"));
                 prestadorServico.setProfissao(ja.getJSONObject(i).getString("profissao"));
                 prestadorServico.setCidade(ja.getJSONObject(i).getString("cidade"));
+                prestadorServico.setBairro(ja.getJSONObject(i).getString("bairro"));
                 prestadorServico.setEndereco(ja.getJSONObject(i).getString("endereco"));
-                prestadorServico.setImagem(ja.getJSONObject(i).getInt("imagem"));
+                prestadorServico.setDddT(Integer.parseInt(ja.getJSONObject(i).getString("dddt")));
+                prestadorServico.setTelefone(Integer.parseInt(ja.getJSONObject(i).getString("telefone")));
+                prestadorServico.setDddW(Integer.parseInt(ja.getJSONObject(i).getString("dddw")));
+                prestadorServico.setWhats(Integer.parseInt(ja.getJSONObject(i).getString("whats")));
+                prestadorServico.setEmail(ja.getJSONObject(i).getString("email"));
+
                 pesquisa.add(prestadorServico);
             }
             Log.e("test", pesquisa.toString());
 
             for (PrestadorServico p : pesquisa) {
+                Log.e("test", "imagem: " + p.getImagem());
                 Log.e("test", "nome: " + p.getNome());
                 Log.e("test", "profissao: " + p.getProfissao());
                 Log.e("test", "cidade: " + p.getCidade());
+                Log.e("test", "bairro: " + p.getBairro());
                 Log.e("test", "endereco: " + p.getEndereco());
-                Log.e("test", "imagem: " + p.getImagem());
+                Log.e("test", "dddT: " + p.getDddT());
+                Log.e("test", "telefone: " + p.getTelefone());
+                Log.e("test", "dddW: " + p.getDddW());
+                Log.e("test", "whats: " + p.getWhats());
+                Log.e("test", "email: " + p.getEmail());
             }
-            this.aux = false;
-
+            setAux(false);
         } catch (JSONException e) {
             Log.i("test", e.toString());
             e.printStackTrace();
         }
-        return (pesquisa);
+        return pesquisa;
     }
 
     private void callServer(final String method, final String data) {
         HttpConnection tarefa = new HttpConnection(this, this);
-        tarefa.execute("https://prestadorservico.herokuapp.com", "teste");
+        tarefa.execute();
     }
 
-    private ArrayList<PrestadorServico> adicionarPrestadorServico() {
+    public ArrayList<PrestadorServico> adicionarPrestadorServico() {
         ArrayList<PrestadorServico> prestadorServicos = new ArrayList<PrestadorServico>();
-        PrestadorServico e = new PrestadorServico("Pedro", "Eletricista", "Porto Alegre - RS", "Rua Pacatuba S/N", R.drawable.eletricista);
+        PrestadorServico e = new PrestadorServico(R.drawable.eletricista, "Pedro", "Eletricista", "Porto Alegre - RS", "Praia de Belas", "Rua Pacatuba, 105", 51, 999887744, 51,  88997711, "pedro@eletricista.com.br");
         prestadorServicos.add(e);
-        e = new PrestadorServico("Renata", "Empregada", "Porto Alegre - RS", "Rua Sergipe S/N", R.drawable.empregada);
+        e = new PrestadorServico(R.drawable.empregada, "Renata", "Empregada", "Caxias - RS", "Floresta", "Rua Sergipe, 415", 54, 744741452, 54,  852524645, "renata@empregada.com.br");
         prestadorServicos.add(e);
-        e = new PrestadorServico("Joao", "Marceneiro", "Porto Alegre - RS", "Av. Otoniel Dórea", R.drawable.marceneiro);
+        e = new PrestadorServico(R.drawable.marceneiro, "Joao", "Marceneiro", "Pelotas - RS", "Floresta", "Rua dos Marceneiros, 1154", 53, 665566332, 53,  445541451, "joao@marceneiro.com.br");
         prestadorServicos.add(e);
-        e = new PrestadorServico("Ricardo", "Pedreiro", "Porto Alegre - RS", "R. Franklin de Campos Sobral, 1675", R.drawable.pedreiro);
+        e = new PrestadorServico(R.drawable.pedreiro, "Ricardo", "Pedreiro", "Porto Alegre - RS", "Floresta", "R. Franklin de Campos Sobral, 1675", 55, 11110212, 53,  654456212, "joao@marceneiro.com.br");
         prestadorServicos.add(e);
+
+        Log.e("test", prestadorServicos.toString());
 
         for (PrestadorServico ps : prestadorServicos) {
             ps.getNome().equals("a");
@@ -190,7 +215,7 @@ public class ActPrincipal extends AppCompatActivity
     }
 
     private ArrayList<PrestadorServico> filtrar(CharSequence s) {
-        ArrayList<PrestadorServico> prestadorServicos = adicionarPrestadorServico();
+        ArrayList<PrestadorServico> prestadorServicos = getPesquisa();
         ArrayList<PrestadorServico> aux = new ArrayList<PrestadorServico>();
 
         for (int i = 0; i < prestadorServicos.size(); i++) {
@@ -238,13 +263,9 @@ public class ActPrincipal extends AppCompatActivity
         if (id == R.id.nav_camera) {
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
